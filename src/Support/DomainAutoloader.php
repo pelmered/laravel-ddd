@@ -138,10 +138,18 @@ class DomainAutoloader
             return [];
         }
 
-        return Lody::classesFromFinder(Finder::create()->files()->in($paths))
-            ->isNotAbstract()
-            ->isInstanceOf(ServiceProvider::class)
-            ->toArray();
+        return Lody::classesFromFinder(
+            Finder::create()
+                  ->files()
+                  ->in($paths)
+                  ->filter(function ($file) {
+                      if (Str::startsWith(strstr($file->getRelativePathname(), '/'), '/Tests/')) {
+                          return false;
+                      }
+                  }))
+           ->isNotAbstract()
+           ->isInstanceOf(ServiceProvider::class)
+           ->toArray();
     }
 
     protected static function discoverCommands(): array
@@ -162,10 +170,18 @@ class DomainAutoloader
             return [];
         }
 
-        return Lody::classesFromFinder(Finder::create()->files()->in($paths))
-            ->isNotAbstract()
-            ->isInstanceOf(Command::class)
-            ->toArray();
+        return Lody::classesFromFinder(
+            Finder::create()
+                  ->files()
+                  ->in($paths)
+                  ->filter(function ($file) {
+                      if (Str::startsWith(strstr($file->getRelativePathname(), '/'), '/Tests/')) {
+                          return false;
+                      }
+                  }))
+           ->isNotAbstract()
+           ->isInstanceOf(Command::class)
+           ->toArray();
     }
 
     public static function cacheProviders(): void
